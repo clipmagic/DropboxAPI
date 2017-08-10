@@ -1,4 +1,4 @@
-# ProcessDropboxAPI
+# DropboxAPI
 ## System requirements
 
 * PHP 5.6.4 or greater
