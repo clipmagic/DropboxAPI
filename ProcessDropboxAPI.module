@@ -34,12 +34,6 @@ class ProcessDropboxAPI extends WireData implements Module, ConfigurableModule {
         $this->app_secret = '';
         $this->authorization_code = '';
 
-        // Other stuff
-    //    $this->app = '';
-    //    $this->dropbox = '';
-    //    $this->callback_url = '';
-    //    $this->authHelper = '';
-
     }
 
     #---------------------
