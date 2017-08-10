@@ -25,7 +25,7 @@ You need to generate Dropbox access token to enable your site to communicate wit
 ```
     <?php namespace ProcessWire;
     
-    $drop = $modules->get('ProcessDropboxAPI');
+    $drop = $modules->get('DropboxAPI');
     
     if ($input->get->code && $input->get->state) {
         $code = $sanitizer->text($input->get->code);
@@ -56,7 +56,7 @@ An example template for sending a file to a Dropbox App folder from ProcessWire:
     use Kunnu\Dropbox\DropboxFile;
     
     // send pdf to Dropbox
-    $drop = $modules->get('ProcessDropboxAPI');
+    $drop = $modules->get('DropboxAPI');
     $app = new DropboxApp($drop->app_key, $drop->app_secret, $drop->authorization_code);
     if ($app) {
         //Configure Dropbox service
