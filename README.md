@@ -62,7 +62,7 @@ An example template for sending a file to a Dropbox App folder from ProcessWire:
     if ($app) {
         //Configure Dropbox service
         $dropbox = new Dropbox($app);
-        $dropboxFile = new DropboxFile($pdfPath);
+        $dropboxFile = new DropboxFile('/path/to/myfilename.pdf');
         $file = $dropbox->upload($dropboxFile, "/myfilename.pdf", ['autorename' => true]);
         //Uploaded File meta data
         if ($file) {
