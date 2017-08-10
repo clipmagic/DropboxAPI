@@ -17,7 +17,7 @@ All kudos to (https://github.com/kunalvarma05/dropbox-php-sdk) for the PHP API.
 
 ## Installation
 * Download the zip file into your site/modules folder then expand the zip file. 
-* Next, login to ProcessWire > go to Modules > click "Refresh". You should see a note that a new module was found. Install the ProcessDropboxAPI module. 
+* Next, login to ProcessWire > go to Modules > click "Refresh". You should see a note that a new module was found. Install the DropboxAPI module. 
 * Configure the module with you App key, App secret and your Call Back URL
 
 You need to generate Dropbox access token to enable your site to communicate with the nominated Dropbox account. Dropbox will generate a token for you or you can create a page for the front end of your ProcessWire site with a template to submit the token request to Dropbox, eg:
