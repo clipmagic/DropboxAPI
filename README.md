@@ -11,8 +11,8 @@ This module enables you to access a single Dropbox (www.dropbox.com) account to 
 All kudos to (https://github.com/kunalvarma05/dropbox-php-sdk) for the PHP API.
 
 ## First steps
-* Visit Refer (https://www.dropbox.com/developers) and read the documentation. 
-* Log into Dropbox and create a new application. It's recommended to only allow the App access to a specified folder
+* Visit (https://www.dropbox.com/developers) and read the documentation. 
+* Log into Dropbox and create a new application. It's recommended to limit ProcessWire App access to a specified folder
 * Make a note of the App key, the App secret and the name of the Dropbox folder
 
 ## Installation
