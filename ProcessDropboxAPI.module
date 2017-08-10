@@ -1,0 +1,176 @@
+<?php namespace ProcessWire;
+/**
+ * ProcessDropboxAPI
+ *
+ * Copyright 2017:
+ *
+ * Clip Magic - Prue Rowland
+ * Web: www.clipmagic.com.au
+ * Email: admin@clipmagic.com.au
+ *
+ * ProcessWire 3.x
+ * Copyright (C) 2014 by Ryan Cramer
+ * Licensed under GNU/GPL v2, see LICENSE.TXT
+ *
+ * http://processwire.com
+ *
+ */
+
+
+use Kunnu\Dropbox\Dropbox;
+use Kunnu\Dropbox\DropboxApp;
+use Kunnu\Dropbox\DropboxFile;
+use Kunnu\Dropbox\Exceptions;
+
+
+class ProcessDropboxAPI extends WireData implements Module, ConfigurableModule {
+
+    public function __construct() {
+
+        // set our default values before ProcessWire configures the module
+
+        //OAuth
+        $this->app_key = '';
+        $this->app_secret = '';
+        $this->authorization_code = '';
+
+        // Other stuff
+    //    $this->app = '';
+    //    $this->dropbox = '';
+    //    $this->callback_url = '';
+    //    $this->authHelper = '';
+
+    }
+
+    #---------------------
+    # Module init
+    #---------------------
+
+    public function ___init() {
+        require __DIR__ . '/vendor/autoload.php';
+
+        //Configure Dropbox Application
+        $this->app = new \Kunnu\Dropbox\DropboxApp\DropboxApp($this->app_key, $this->app_secret);
+
+        //Configure Dropbox service
+        $this->dropbox = new \Kunnu\Dropbox\Dropbox\Dropbox($app);
+
+        //DropboxAuthHelper
+        $this->authHelper = $this->dropbox->getAuthHelper();
+
+    }
+
+
+    public function ___ready() {
+
+    }
+
+    #---------------------
+    # Interface methods
+    #---------------------
+
+    static public function getModuleInfo() {
+        return array(
+            'title' => 'Dropbox PHP API v2 (Unofficial) by Kunal Varma',
+            'author' => 'Clip magic',
+            'version' => '0.0.1',
+            'summary' => 'ProcessWire module wrapper for Dropbox v2 PHP API. All kudos to Kunal Varma. See https://github.com/kunalvarma05/dropbox-php-sdk for more info.',
+            'singular' => true,
+            'autoload' => false
+            );
+    }
+
+      public static function getModuleConfigInputfields(array $data) {
+
+
+        $fields = new InputfieldWrapper();
+
+        // OAuth fieldset
+        $fieldset = wire('modules')->get('InputfieldFieldset');
+        $fieldset->label = 'OAuth Login';
+
+            // ask for the client_id
+            $field = wire('modules')->get('InputfieldText');
+            $field -> name = 'app_key';
+            $field -> label = "Enter your App key";
+            if (isset($data['app_key']))
+                $field -> value = $data['app_key'];
+            $fieldset -> add($field);
+
+            // ask for the app secret
+            $field = wire('modules')->get('InputfieldText');
+            $field -> name = 'app_secret';
+            $field -> collapsed = collapsedYes;
+            $field -> label = "Enter your app secret";
+            if (isset($data['app_secret']))
+                $field -> value = $data['app_secret'];
+            $fieldset -> add($field);
+
+            // ask for the authorization code
+            $field = wire('modules')->get('InputfieldText');
+            $field -> name = 'authorization_code';
+            $field -> collapsed = collapsedYes;
+            $field -> label = "Enter your authorization code";
+            if (isset($data['authorization_code']))
+                $field -> value = $data['authorization_code'];
+            $fieldset -> add($field);
+
+            // ask for the callback url
+            $field = wire('modules')->get('InputfieldURL');
+            $field -> name = 'callback_url';
+            $field -> label = "Callback URL";
+            $field -> description = __("Specify the full URL to the callback page");
+            if (isset($data['callback_url']))
+                $field -> value = $data['callback_url'];
+            $fieldset -> add($field);
+
+        $fieldset->add($field);
+        $fields -> add($fieldset);
+
+        return $fields;
+    }
+
+
+    /***************************************************************************
+     * Calls to the API
+     ***************************************************************************/
+    public static function api($function_name, $args = null) {
+
+        if (!empty($args) && is_array($args))
+            $args = implode(",", $args);
+        $out = call_user_func($function_name, $args);
+        return $out;
+    }
+
+    /**
+     * Upload a File to Dropbox
+     *
+     * @param  string|DropboxFile $dropboxFile DropboxFile object or Path to file
+     * @param  string             $pathFrom      Path to local file to be uploaded in file name
+     * @param  string             $pathTo        Path to Dropbox folder inc file name save file to
+     * @param  array              $params        Additional Params
+     *
+     * @link https://www.dropbox.com/developers/documentation/http/documentation#files-upload
+     *
+     * @return \Kunnu\Dropbox\Models\FileMetadata or string, either
+     * - (object) file metadata, eg to display name: $myFileMetadataObj->getName());
+     * - (string) "in_progress"
+     * - (string) "failed"
+     */
+
+
+    public function upload ($pathFrom, $pathTo, $options) {
+        if (!$pathFrom)
+            throw new WireException (__('No originating file path specified'));
+        if (!$pathTo)
+            throw new WireException (__('No destination Dropbox file path specified'));
+        $result = $this->_upload($pathFrom, $pathTo, $options);
+        return $result;
+    }
+
+    private function _upload ($pathFrom, $pathTo, $options) {
+        $dropboxFile = new \Kunnu\Dropbox\DropboxFile\DropboxFile($pathFrom);
+        $result = $this->dropbox->upload($dropboxFile, $pathTo, $options);
+        return $result;
+     }
+}
