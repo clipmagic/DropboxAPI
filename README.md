@@ -43,7 +43,7 @@ You need to generate Dropbox access token to enable your site to communicate wit
     ?>
 ```
 
-Once you have entered the token in the module configuration, you can unpublish this page. Acquiring the token this way allows you to change the PW/Dropbox user later.
+Once you have entered the token in the module configuration, you can unpublish this page.
 
 ## Usage
 
