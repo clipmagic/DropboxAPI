@@ -1,6 +1,6 @@
 <?php namespace ProcessWire;
 /**
- * ProcessDropboxAPI
+ * DropboxAPI
  *
  * Copyright 2017:
  *
@@ -23,7 +23,7 @@ use Kunnu\Dropbox\DropboxFile;
 use Kunnu\Dropbox\Exceptions;
 
 
-class ProcessDropboxAPI extends WireData implements Module, ConfigurableModule {
+class DropboxAPI extends WireData implements Module, ConfigurableModule {
 
     public function __construct() {
 
