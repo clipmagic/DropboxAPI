@@ -14,7 +14,7 @@ Optionally, create a Dropbox folder within your Dropbox account. This step is a 
 
 ## Installation
 * Download the zip file into your site/modules folder then expand the zip file. 
-* Next, login to ProcessWire > go to Modules > click "Refresh". You should see a note that a new module was found. Install the ProcessRecurringEvents module. 
+* Next, login to ProcessWire > go to Modules > click "Refresh". You should see a note that a new module was found. Install the ProcessDropboxAPI module. 
 
 
 ## Usage
