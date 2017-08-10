@@ -6,7 +6,7 @@
 * The PHP mbstring extension
 
 ## General information
-This module enables you to access a single Dropbox (www.dropbox.com) account to upload and/or download files. What you can do is determined by the App preferences. 
+This module enables you to access a single Dropbox (www.dropbox.com) account to upload files from a ProcessWire website.
 
 All kudos to (https://github.com/kunalvarma05/dropbox-php-sdk) for the PHP API.
 
