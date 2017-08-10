@@ -28,17 +28,16 @@ You need to generate Dropbox access token to enable your site to communicate wit
     $drop = $modules->get('ProcessDropboxAPI');
     
     if ($input->get->code && $input->get->state) {
-        $code = $sanitizer->pageName($input->get->code);
-        $state = $sanitizer->pageName($input->get->state);
+        $code = $sanitizer->text($input->get->code);
+        $state = $sanitizer->text($input->get->state);
     
         //Fetch the AccessToken
-        $accessToken = $drop->getAccessToken($input->get->code, $input->get->state);
+        $accessToken = $drop->getAccessToken($code, $state);
     
-        $page->body = "Copy/paste this code into the module configuration: " .  $accessToken;
-        $page->button ="";
+        echo "Copy/paste this code into the module configuration: " .  $accessToken;
     
     } else {
-        $page->button =  "<p><a href='" . $drop->getAuthURL() . "'>Log in with Dropbox</a></p>";
+        echo  "<p><a href='" . $drop->getAuthURL() . "'>Log in with Dropbox</a></p>";
     }
     ?>
 ```
