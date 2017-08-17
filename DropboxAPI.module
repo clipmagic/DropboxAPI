@@ -44,7 +44,7 @@ class DropboxAPI extends WireData implements Module, ConfigurableModule {
         require __DIR__ . '/vendor/autoload.php';
 
         //Configure Dropbox Application
-        $this->app = new \Kunnu\Dropbox\DropboxApp\DropboxApp($this->app_key, $this->app_secret);
+        $app = new \Kunnu\Dropbox\DropboxApp\DropboxApp($this->app_key, $this->app_secret);
 
         //Configure Dropbox service
         $this->dropbox = new \Kunnu\Dropbox\Dropbox\Dropbox($app);
