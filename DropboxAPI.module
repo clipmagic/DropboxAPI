@@ -16,16 +16,34 @@
  *
  */
 
-
 use Kunnu\Dropbox\Dropbox;
 use Kunnu\Dropbox\DropboxApp;
 use Kunnu\Dropbox\DropboxFile;
 use Kunnu\Dropbox\Exceptions;
 
+/*
+use Kunnu\Dropbox\Models\File;
+use Kunnu\Dropbox\Models\Account;
+use Kunnu\Dropbox\Models\Thumbnail;
+use Kunnu\Dropbox\Models\AccountList;
+use Kunnu\Dropbox\Models\ModelFactory;
+use Kunnu\Dropbox\Models\FileMetadata;
+use Kunnu\Dropbox\Models\CopyReference;
+use Kunnu\Dropbox\Models\FolderMetadata;
+use Kunnu\Dropbox\Models\ModelCollection;
+use Kunnu\Dropbox\Authentication\OAuth2Client;
+use Kunnu\Dropbox\Store\PersistentDataStoreFactory;
+use Kunnu\Dropbox\Authentication\DropboxAuthHelper;
+use Kunnu\Dropbox\Exceptions\DropboxClientException;
+use Kunnu\Dropbox\Security\RandomStringGeneratorFactory;
+use Kunnu\Dropbox\Http\Clients\DropboxHttpClientFactory;
+*/
 
-class DropboxAPI extends WireData implements Module, ConfigurableModule {
+class DropboxAPI extends WireData implements Module, ConfigurableModule
+{
 
-    public function __construct() {
+    public function __construct()
+    {
 
         // set our default values before ProcessWire configures the module
 
@@ -33,6 +51,10 @@ class DropboxAPI extends WireData implements Module, ConfigurableModule {
         $this->app_key = '';
         $this->app_secret = '';
         $this->authorization_code = '';
+        $this->callback_url = '';
+
+        require_once dirname(__FILE__) . '/dropbox-php-sdk/vendor/autoload.php';
+
 
     }
 
@@ -43,22 +65,24 @@ class DropboxAPI extends WireData implements Module, ConfigurableModule {
     /**
      *
      */
-    public function ___init() {
-        require __DIR__ . '/vendor/autoload.php';
+    public function ___init()
+    {
 
         //Configure Dropbox Application
-        $app = new \Kunnu\Dropbox\DropboxApp\DropboxApp($this->app_key, $this->app_secret);
+        $this->app = new \Kunnu\Dropbox\DropboxApp($this->app_key, $this->app_secret, $this->authorization_code);
 
         //Configure Dropbox service
-        $this->dropbox = new \Kunnu\Dropbox\Dropbox\Dropbox($app);
+        $this->dropbox = new \Kunnu\Dropbox\Dropbox($this->app);
 
         //DropboxAuthHelper
         $this->authHelper = $this->dropbox->getAuthHelper();
+        return $this;
 
     }
 
 
-    public function ___ready() {
+    public function ___ready()
+    {
 
     }
 
@@ -66,18 +90,20 @@ class DropboxAPI extends WireData implements Module, ConfigurableModule {
     # Interface methods
     #---------------------
 
-    static public function getModuleInfo() {
+    static public function getModuleInfo()
+    {
         return array(
             'title' => 'Dropbox PHP API v2 (Unofficial) by Kunal Varma',
             'author' => 'Clip magic',
-            'version' => '0.0.1',
+            'version' => '0.0.2',
             'summary' => 'ProcessWire module wrapper for Dropbox v2 PHP API. All kudos to Kunal Varma. See https://github.com/kunalvarma05/dropbox-php-sdk for more info.',
             'singular' => true,
             'autoload' => false
-            );
+        );
     }
 
-      public static function getModuleConfigInputfields(array $data) {
+    public static function getModuleConfigInputfields(array $data)
+    {
 
 
         $fields = new InputfieldWrapper();
@@ -86,43 +112,43 @@ class DropboxAPI extends WireData implements Module, ConfigurableModule {
         $fieldset = wire('modules')->get('InputfieldFieldset');
         $fieldset->label = 'OAuth Login';
 
-            // ask for the client_id
-            $field = wire('modules')->get('InputfieldText');
-            $field -> name = 'app_key';
-            $field -> label = "Enter your App key";
-            if (isset($data['app_key']))
-                $field -> value = $data['app_key'];
-            $fieldset -> add($field);
+        // ask for the client_id
+        $field = wire('modules')->get('InputfieldText');
+        $field->name = 'app_key';
+        $field->label = "Enter your App key";
+        if (isset($data['app_key']))
+            $field->value = $data['app_key'];
+        $fieldset->add($field);
 
-            // ask for the app secret
-            $field = wire('modules')->get('InputfieldText');
-            $field -> name = 'app_secret';
-            $field -> collapsed = collapsedYes;
-            $field -> label = "Enter your app secret";
-            if (isset($data['app_secret']))
-                $field -> value = $data['app_secret'];
-            $fieldset -> add($field);
+        // ask for the app secret
+        $field = wire('modules')->get('InputfieldText');
+        $field->name = 'app_secret';
+        $field->collapsed = collapsedYes;
+        $field->label = "Enter your app secret";
+        if (isset($data['app_secret']))
+            $field->value = $data['app_secret'];
+        $fieldset->add($field);
 
-            // ask for the authorization code
-            $field = wire('modules')->get('InputfieldText');
-            $field -> name = 'authorization_code';
-            $field -> collapsed = collapsedYes;
-            $field -> label = "Enter your authorization code";
-            if (isset($data['authorization_code']))
-                $field -> value = $data['authorization_code'];
-            $fieldset -> add($field);
+        // ask for the authorization code
+        $field = wire('modules')->get('InputfieldText');
+        $field->name = 'authorization_code';
+        $field->collapsed = collapsedYes;
+        $field->label = "Enter your authorization code";
+        if (isset($data['authorization_code']))
+            $field->value = $data['authorization_code'];
+        $fieldset->add($field);
 
-            // ask for the callback url
-            $field = wire('modules')->get('InputfieldURL');
-            $field -> name = 'callback_url';
-            $field -> label = "Callback URL";
-            $field -> description = __("Specify the full URL to the callback page");
-            if (isset($data['callback_url']))
-                $field -> value = $data['callback_url'];
-            $fieldset -> add($field);
+        // ask for the callback url
+        $field = wire('modules')->get('InputfieldURL');
+        $field->name = 'callback_url';
+        $field->label = "Callback URL";
+        $field->description = __("Specify the full URL to the callback page");
+        if (isset($data['callback_url']))
+            $field->value = $data['callback_url'];
+        $fieldset->add($field);
 
         $fieldset->add($field);
-        $fields -> add($fieldset);
+        $fields->add($fieldset);
 
         return $fields;
     }
@@ -131,7 +157,8 @@ class DropboxAPI extends WireData implements Module, ConfigurableModule {
     /***************************************************************************
      * Calls to the API
      ***************************************************************************/
-    public static function api($function_name, $args = null) {
+    public static function api($function_name, $args = null)
+    {
 
         if (!empty($args) && is_array($args))
             $args = implode(",", $args);
@@ -143,9 +170,9 @@ class DropboxAPI extends WireData implements Module, ConfigurableModule {
      * Upload a File to Dropbox
      *
      * @param  string|DropboxFile $dropboxFile DropboxFile object or Path to file
-     * @param  string             $pathFrom      Path to local file to be uploaded in file name
-     * @param  string             $pathTo        Path to Dropbox folder inc file name save file to
-     * @param  array              $params        Additional Params
+     * @param  string $pathFrom Path to local file to be uploaded in file name
+     * @param  string $pathTo Path to Dropbox folder inc file name save file to
+     * @param  array $params Additional Params
      *
      * @link https://www.dropbox.com/developers/documentation/http/documentation#files-upload
      *
@@ -156,7 +183,8 @@ class DropboxAPI extends WireData implements Module, ConfigurableModule {
      */
 
 
-    public function upload ($pathFrom, $pathTo, $options) {
+    public function upload($pathFrom, $pathTo, $options)
+    {
         if (!$pathFrom)
             throw new WireException (__('No originating file path specified'));
         if (!$pathTo)
@@ -165,9 +193,17 @@ class DropboxAPI extends WireData implements Module, ConfigurableModule {
         return $result;
     }
 
-    private function _upload ($pathFrom, $pathTo, $options) {
-        $dropboxFile = new \Kunnu\Dropbox\DropboxFile\DropboxFile($pathFrom);
+    private function _upload($pathFrom, $pathTo, $options)
+    {
+        $dropboxFile = new DropboxFile\DropboxFile($pathFrom);
         $result = $this->dropbox->upload($dropboxFile, $pathTo, $options);
         return $result;
-     }
+    }
+
+
+    public function getDropBoxFile($filePath, $mode)
+    {
+        $result = new DropboxFile($filePath, $mode);
+        return $result;
+    }
 }
