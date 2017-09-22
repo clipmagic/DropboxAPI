@@ -21,23 +21,6 @@ use Kunnu\Dropbox\DropboxApp;
 use Kunnu\Dropbox\DropboxFile;
 use Kunnu\Dropbox\Exceptions;
 
-/*
-use Kunnu\Dropbox\Models\File;
-use Kunnu\Dropbox\Models\Account;
-use Kunnu\Dropbox\Models\Thumbnail;
-use Kunnu\Dropbox\Models\AccountList;
-use Kunnu\Dropbox\Models\ModelFactory;
-use Kunnu\Dropbox\Models\FileMetadata;
-use Kunnu\Dropbox\Models\CopyReference;
-use Kunnu\Dropbox\Models\FolderMetadata;
-use Kunnu\Dropbox\Models\ModelCollection;
-use Kunnu\Dropbox\Authentication\OAuth2Client;
-use Kunnu\Dropbox\Store\PersistentDataStoreFactory;
-use Kunnu\Dropbox\Authentication\DropboxAuthHelper;
-use Kunnu\Dropbox\Exceptions\DropboxClientException;
-use Kunnu\Dropbox\Security\RandomStringGeneratorFactory;
-use Kunnu\Dropbox\Http\Clients\DropboxHttpClientFactory;
-*/
 
 class DropboxAPI extends WireData implements Module, ConfigurableModule
 {
